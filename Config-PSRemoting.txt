@@ -9,15 +9,18 @@ Enable-PSRemoting
 
 ### クライアント側（リモート操作する側）
 
+# 変数
+$remoteComputer= "remote ip address"
+$username = "administrator"
+$password = 'your password'
+$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $username, $(ConvertTo-SecureString -String $password -AsPlainText -Force)
+
 # WinRMサービスの開始
 Start-Service WinRM
 Get-Service WinRM
 
-# 変数
-$username = "administrator"
-$password = 'your password'
-$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $username, $(ConvertTo-SecureString -String $password -AsPlainText -Force)
-$remoteComputer= "remote ip address"
+# サーバのIPアドレスを信頼できるホストとして登録する
+Set-Item WSMan:\localhost\Client\TrustedHosts -Value $remoteComputer
 
 # サーバへ接続と切断
 Enter-PSSession -ComputerName $remoteComputer-Credential $cred
