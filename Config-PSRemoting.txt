@@ -1,0 +1,28 @@
+### サーバ側（リモート操作される側）
+
+# 実行権限を変更
+Set-ExecutionPolicy RemoteSigned
+Get-ExecutionPolicy
+
+# PSRemotingを有効化
+Enable-PSRemoting
+
+### クライアント側（リモート操作する側）
+
+# WinRMサービスの開始
+Start-Service WinRM
+Get-Service WinRM
+
+# 変数
+$username = "administrator"
+$password = 'your password'
+$cred = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $username, $(ConvertTo-SecureString -String $password -AsPlainText -Force)
+$remoteComputer= "remote ip address"
+
+# サーバへ接続と切断
+Enter-PSSession -ComputerName $remoteComputer-Credential $cred
+Exit-PSSession
+
+# リモート先でコマンド実行
+$scripts= { Get-UICulture }
+Invoke-Command -ComputerName $remoteComputer -ScriptBlock $scripts -Credential $cred
